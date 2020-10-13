@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <ctime>
+#include <time.h>
+#pragma warning(disable:4996)//disables the errors that show for the local time issue in Visual Studio
 
 using namespace std;
 
@@ -48,7 +49,7 @@ DataStore* DataStore::instance = nullptr;
 
 int main() {
 
-	string userEntry = "null";
+	string userEntry = "";
 
 	DataStore* dsObject = dsObject->getInstance();
 	dsObject->setData(userEntry);
@@ -63,18 +64,24 @@ int main() {
 
 	while (true)
 	{
-		cin >> userEntry;//takes the input and stores it in userEntry
+		getline(cin, userEntry);
 
-		struct tm date;
+/*		struct tm date;
 		time_t now = time(0);
 		localtime_s(&date, &now);//this has to be created each time to contain the date at the time of entry
+*/
+		time_t rawtime;
+		struct tm* timeinfo;
+
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+
 
 		if (userEntry != "0")
 		{
 			dsObject->setData(userEntry);
 			textFileWrite 
-				<<date.tm_mon + 1 << "/" << date.tm_mday << "/" << date.tm_year + 1900 
-				<< ":" <<date.tm_hour << ":" << date.tm_min << ":" << date.tm_sec 
+				<< asctime(timeinfo)
 				<< ", " << dsObject->getData() << endl;
 		}//adds the userEntry with the datetime
 		else
